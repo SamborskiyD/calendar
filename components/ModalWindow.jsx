@@ -7,8 +7,8 @@ import * as yup from "yup";
 
 const validationSchema = yup.object({
   title: yup.string().required("Title is required"),
-  timeFrom: yup.date(),
-  timeTo: yup.date(),
+  timeFrom: yup.string(),
+  timeTo: yup.string(),
 });
 
 const hoursToMinutes = (timeFrom, timeTo) => {
