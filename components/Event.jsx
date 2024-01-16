@@ -14,14 +14,14 @@ const Event = ({event}) => {
     modalContainer = document.getElementById("modal");
   }
 
-  const customStyle = { top: event.start + "px", height: event.duration * 2 + "px" };
+  const customStyle = { top: event.start + "px", height: event.duration * 2 + "px", left: event.order*200 + 60 + 'px' };
 
   return (
     <>
     <div
       onClick={() => setIsModalOpen(true)}
       style={customStyle}
-      className="relative left-14 bg-blue border-l-2 p-2 max-w-[200px] w-full border-darkBlue cursor-pointer"
+      className="absolute bg-blue border-l-2 p-2 max-w-[200px] overflow-hidden whitespace-nowrap text-ellipsis w-full border-darkBlue cursor-pointer"
     >
       {event.title}
     </div>

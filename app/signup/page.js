@@ -61,7 +61,7 @@ const SignUpPage = () => {
             <form
                 method="post"
                 onSubmit={handleSubmit(onSubmit)}
-                className=" mx-auto my-[200px] max-w-[30%] p-4 rounded-lg flex flex-col gap-5 items-center shadow-2xl"
+                className=" mx-auto my-[200px] max-w-[90vw] md:max-w-[60vw] lg:max-w-[30vw] p-4 rounded-lg flex flex-col gap-5 items-center shadow-2xl"
             >
                 <h1 className="text-darkBlue font-semibold text-3xl text-center">Sign Up</h1>
                 <div className="flex flex-col gap-2 w-full">

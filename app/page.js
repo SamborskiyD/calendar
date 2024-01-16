@@ -7,19 +7,43 @@ import { getEvents } from "@/db/actions"
 
 export default async function Home() {
 
-  const events = await getEvents()
+  const calcPositionOfEvents = async () => {
+    let events = await getEvents()
+
+    if (!events.error) {
+      events = events
+        .sort((a, b) => a.start - b.start)
+        .map(event => { return { ...event, order: 0 } })
+
+
+      for (let i = 0; i < events.length; i++) {
+        if (i > 0) {
+          let prevEventHeight = events[i - 1].start + events[i - 1].duration * 2
+
+          if (prevEventHeight >= events[i].start) {
+            events[i].order = events[i - 1].order + 1
+          }
+        }
+      }
+    }
+
+    return events
+  }
+
+  const eventsWithPosition = await calcPositionOfEvents()
+
 
   const hours = ['8:00', '8:30', '9:00', '9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '1:00', '1:30', '2:00', '2:30', '3:00', '3:30', '4:00', '4:30', '5:00']
 
   return (
     <main>
-      <div className="w-[60vw] mt-20 mx-auto">
+      <div className="w-[90vw] lg:w-[60vw] mt-20 mx-auto">
 
-        <div className="flex items-center justify-between border-2 border-darkBlue p-4 mb-2 rounded-t-lg">
+        <div className="flex gap-4 items-center justify-between border-2 border-darkBlue p-4 mb-2 rounded-t-lg">
           <h1 className=" capitalize text-gray-400 text-lg">{new Date().toLocaleDateString('uk-UA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h1>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-wrap justify-end items-center gap-4">
             <LogOutButton />
-            <DownloadButton events={events} />
+            <DownloadButton events={eventsWithPosition} />
             <AddButton />
           </div>
         </div>
@@ -31,8 +55,7 @@ export default async function Home() {
             </div>
           ))}
           {
-            !events.error &&
-            events?.map((event) => (<Event key={event.id} event={event} />))
+            eventsWithPosition?.map((event) => (<Event key={event.id} event={event} />))
           }
         </div>
       </div>
