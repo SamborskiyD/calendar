@@ -10,7 +10,6 @@ export default async function Home() {
   let events = await getEvents()
 
   const calcPositionOfEvents = () => {
-
     if (!events.error) {
       events = events
         .sort((a, b) => a.start - b.start)
@@ -26,9 +25,10 @@ export default async function Home() {
           }
         }
       }
-    }
 
-    return events
+      return events
+    }
+    return []
   }
 
   const eventsWithPosition = calcPositionOfEvents()
