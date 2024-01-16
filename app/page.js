@@ -31,6 +31,7 @@ export default async function Home() {
             </div>
           ))}
           {
+            !events.error &&
             events?.map((event) => (<Event key={event.id} event={event} />))
           }
         </div>
