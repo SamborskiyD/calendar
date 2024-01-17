@@ -7,8 +7,8 @@ import * as yup from "yup";
 
 const validationSchema = yup.object({
   title: yup.string().required("Title is required"),
-  timeFrom: yup.string(),
-  timeTo: yup.string(),
+  timeFrom: yup.string().required("Time From is required"),
+  timeTo: yup.string().required("Time To is required"),
 });
 
 const hoursToMinutes = (timeFrom, timeTo) => {
@@ -17,35 +17,36 @@ const hoursToMinutes = (timeFrom, timeTo) => {
   const minTime = new Date();
 
   minTime.setHours(8, 0, 0, 0);
-  startTime.setHours(
-    timeFrom.split(":")[0],
-    timeFrom.split(":")[1],
-    0,
-    0
-  );
+  startTime.setHours(timeFrom.split(":")[0], timeFrom.split(":")[1], 0, 0);
   endTime.setHours(timeTo.split(":")[0], timeTo.split(":")[1], 0, 0);
 
   const start = (startTime - minTime) / 30 / 1000;
   const duration = (endTime - startTime) / 60 / 1000;
 
-  return {start, duration}
+  return { start, duration };
 };
 
 const minutesToHours = (start, duration) => {
+  if (start && duration) {
+    const timeFrom = new Date();
+    const timeTo = new Date();
+    const minTime = new Date();
 
-  const timeFrom = new Date()
-  const timeTo = new Date()
-  const minTime = new Date();
+    minTime.setHours(8, 0, 0, 0);
+    timeFrom.setTime(minTime.getTime() + start * 30 * 1000);
+    timeTo.setTime(
+      minTime.getTime() + start * 30 * 1000 + duration * 60 * 1000
+    );
 
-  minTime.setHours(8, 0, 0, 0);
-  timeFrom.setTime(minTime.getTime() + start*30*1000)
-  timeTo.setTime(minTime.getTime() + start*30*1000 + duration*60*1000)
-
-  return {timeFrom: timeFrom.toLocaleTimeString(), timeTo: timeTo.toLocaleTimeString()}
-}
+    return {
+      timeFrom: timeFrom.toLocaleTimeString(),
+      timeTo: timeTo.toLocaleTimeString(),
+    };
+  }
+  else return null
+};
 
 const ModalWindow = ({ event, onClose, onSave }) => {
-
   const {
     register,
     handleSubmit,
@@ -54,19 +55,18 @@ const ModalWindow = ({ event, onClose, onSave }) => {
   } = useForm({
     defaultValues: {
       title: event?.title,
-      ...minutesToHours(event?.start, event?.duration)
+      ...minutesToHours(event?.start, event?.duration),
     },
     resolver: yupResolver(validationSchema),
   });
 
   const onSubmit = async (data) => {
-    
-    const time = hoursToMinutes(data.timeFrom, data.timeTo)
+    const time = hoursToMinutes(data.timeFrom, data.timeTo);
 
     const payload = {
       id: event?.id ? event.id : Math.floor(Math.random() * 100000),
       title: data.title,
-      ...time
+      ...time,
     };
 
     const res = await onSave(payload);
